@@ -1,0 +1,53 @@
+= Coupling and Cohesion
+:toc:
+
+== Preface
+
+"Coupling" is one of those reified abstractions in software—what critical theorists might call *_a thingified idea_*. It masquerades as a concrete diagnosis when, in reality, it's a placeholder for a vaguely understood sensation of entanglement in code. Like Wittgenstein warned about in Philosophical Investigations, words can trap us: they suggest clarity while sowing confusion. People throw around 'coupling' as if invoking the word illuminates the problem, when in fact it often obscures it. Saying 'this code is bad because it’s coupled' is like telling a blind man to 'just look at it'—you’re referencing a solution without providing any sensory path to reach it. Don't be fooled: understanding doesn't come from naming. A real explanation has to unfold the mechanics, not just label them.
+
+In this document, I am to outline (with examples), what coupling _actually_ refers to, and how reducing coupling has an effect that allows us to make code that can adapt to change easier.
+
+== What is code?
+
+I think one thing that has been overlooked (definitely by myself) is that code is fundamentally a representation of logic. Logic is fundamentally philosophical, and it also comes in much more forms than just code. Mediums of logic:
+
+- Natural Language (what we speak every day).
+- Mathematical forms.
+
+..and the list goes on (without much time to get going lol)...
+
+But the point I am trying to make is that as software engineers we can often get caught up in this notion that we live in our own unique world of software, and we can only derive knowledge from within our own domain. Fundamentally however, this is not the case and logic comes in a shitload of forms, and we don't appreciate these forms enough.
+
+Particularly, we don't appreciate maths.
+
+For me maths is probably the best form of logic to learn from. The crossover between mathematical concepts and software engineering is no random occurrence, but a consequence of the logic of programming languages being modeled after mathematical concepts. it is where programming languages are derived. In this document I will reference mathematical topics (particularly category theory and abstract algebra) to get my point across, and hopefully help encourage someone out there to indulge, and enjoy this exploration to understanding of our beautiful art.
+
+== What is good (clean) code?
+
+According to the link:https://refactoring.guru/refactoring/what-is-refactoring[Refactoring Guru] website, they list a couple of principles for what clean code is:
+
+- Obvious for other programmers.
+- Doesn't contain duplication.
+- Contains a minimal number of classes/other moving parts.
+- Passes all tests
+- Easier and cheaper to maintain.
+
+== Coupling
+
+A crude simplification is to say that "if a class is affected by another class, _we got coupling baby_". Coupling in and of itself isn't a bad thing. The presence of coupling, can and often is a bad thing - but it is the resulting effects of coupling that is bad. Logically elements of your system will always be coupled, how you couple them however, is the art.
+
+The ultimate aim of writing code is to minimise cost and maximise profit. Decoupling can effect it, where appropriate. How much time you spend on something effects the cost too. An element of a software engineer, which I have seen shine through in my dad a lot, is a very strong understanding of the cost of time. Your time is precious and being an effective engineer, is about crafting work that minimises that cost, both in the time of creation now, and likely refactoring in the future.
+
+Making a mathematically perfect solution to a problem is not the aim. The aim is whatever the end goal of the broader system is. If you are writing code for a business, then the goal is to make profit, in which case brewing on fine optimizations is a desperate way to go about things. Your definition of optimal as an engineer, is whatever moves closer to the goal of the broader picture. In the case of a computer scientist, the optimal solution could be the minimal time complexity for some arbitrary algorithm. For a software engineer however brewing on the most optimal solution to an algorithm all year long will probably get you fired, because in the context of the goals of an engineer, that is not productive.
+
+Good quality code is the target - but for an engineer how you go about moving toward that goal is far more contextual. In order to hit that target, you need to know what it looks like. The goal of this document is to learn what bad code looks like, and how examples of bad code can be improved.
+
+== Tightly coupled code
+
+Bad code typically means that you have a pain in your arse trying to change it. Here are some fast (but not hard) heuristics to help with that:
+
+- Work to an interface.
+- Don't work to concretes.
+- Do not over-define.
+
+... and you could probably make a career out of that...

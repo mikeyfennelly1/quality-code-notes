@@ -1,0 +1,10 @@
+= antipatterns
+:toc:
+
+In software circles, there are many classic antipatterns, that engineers typically just avoid. In this document I will go over some of the classic antipatterns that can crop up. They can fall under the categories of
+
+1. Bloaters (these are the most obvious ones).
+2. Object-Orientation abusers.
+3. Change Preventers.
+4. Dispensables
+5. Couplers

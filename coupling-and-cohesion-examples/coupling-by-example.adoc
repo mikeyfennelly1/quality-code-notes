@@ -1,0 +1,169 @@
+= Examples
+:toc:
+
+== Example 1 - Car & Engine - Java
+
+In this example, *Car is tightly coupled to Engine*. This is caused by Car directly instantiating an Engine object (working to concrete).
+
+This means that if Engine changes, car will likely have to change. This code is tightly coupled, and the reasoning for this is because `Car`, can only ever define `Engine`.
+
+*A change to Engine, means a change to Car.*
+
+[source, java]
+----
+class Engine {
+    public void start() {
+        System.out.println("Engine started");
+    }
+}
+
+class Car {
+    private Engine engine = new Engine(); // Direct instantiation
+
+    public void startCar() {
+        engine.start();
+    }
+}
+----
+
+*Scope for change:*
+
+Because we have directly instantiated Engine, we have given complete definition to the `Car` class in relation to `Engine`. In mathematical terms, this would be considered a homeomorphic relationship between Car and Engine.
+
+=== What happens if we try change the dependency.
+
+=== Reducing coupling through dependency injection, and polymorphism.
+
+Dependency injection essentially means creating a way to have your classes reference another class at the object level, and eliminating references between objects.
+
+[source, java]
+----
+interface Engine {
+    void start();
+}
+
+class ElectricEngine implements Engine {
+    public void start() {
+        System.out.println("Electric engine started");
+    }
+}
+
+class Car {
+    private Engine engine;
+
+    // Inject dependency through constructor
+    public Car(Engine engine) {
+        this.engine = engine;
+    }
+
+    public void startCar() {
+        engine.start();
+    }
+}
+----
+
+In the above example you can see that we changed the code quite a bit. I will explain the changes that were made first, and then the effects that they have second. Here is what we did:
+
+1. Took out the previous concrete reference to the `Engine` class from Car.
+2. Created an interface called Engine.
+3. Injected Engine as a dependency of Car.
+
+**What is the purpose of the injection bit though? What purpose does that serve?**
+
+The purpose of injecting the dependency is to _configure at runtime, not at compile time_. This is a common principle used by engineers, but why does it work?
+
+
+
+== Example 2 - Server & Server configuration - Go
+
+=== Tightly Coupled
+
+[source, go]
+----
+package server
+
+import "net"
+
+type Server struct {
+    listener net.Listener
+}
+
+func (s *Server) Addr() net.Addr
+func (s *Server) Shutdown()
+
+func NewServer(addr string) (*Server, error) {
+	l, err := net.Listen("tcp", addr)
+	if err != nil {
+		return nil, err
+	}
+	srv := Server{listener: l}
+
+	go srv.run()
+	return &srv, nil
+}
+----
+
+*Scope for change:*
+
+Well before we get into coupling, let's think about the scope of this function in regard to change. This function creates a server on a port, and that is it.
+
+So the only thing that we can change, is the address.
+
+=== Bringing it back to Coupling and Cohesion
+
+*Question:*
+
+Why is this tightly coupled?
+
+*Thinking about why it might be a bad design:*
+
+First of all, lets distill what the `NewServer(...)` function actually does, and then we can define the set of potential objects that we can say that NewServer does it's work on.
+
+The purpose of this function, is to return a pointer to a `Server` object.
+
+The NewServer function, as per the above design, gives us 1 option to configure. This locks us into a single form of parameters, and hence minimises the set of potential objects that this function can do it's work on, to objects that only vary by TCP port. If someone was to come along and want TLS with their server (or some other form of configuration) - this would be out of the scope of this function, and we would have to refactor it so that it can then encompass the larger set which includes such configuration.
+
+In this case, we say that the function is tightly coupled - but that doesn't really mean anything.
+
+In reality, the problem here is that the function inflexible to potential future configuration options, and in its current state, the set of potential objects that it can work with is very limited, making it difficult to change, especially if it is used a lot in the codebase.
+
+Here are some example future configurations that a user of this function may want, and we will think about changing this function after:
+
+- __Does this server support TLS?__
+- __Can I limit the number of clients that I have?__
+- __If someone is trying to DOS me can I rate limit their IP?__
+
+__So now you are in a situation where you need more configuration, you have used this function all over the place, and now you're left wondering how do I refactor this because now this concern is not just with this function, but all around the rest of my codebase.__
+
+*So what should we do?:*
+
+__**Make the scope of the function more broad, and make the parameters less concrete.** __
+
+Here is a better solution:
+
+[source, go]
+----
+type Config struct {
+	Timeout time.Duration
+	Cert *tls.Cert
+}
+
+// NewServer this time replaces just having addr string,
+// and instead includes a Config struct as a parameter.
+func NewServer(addr string, config Config) (*Server, error)
+----
+
+In this new configuration, we pass the Config structure as a parameter to the NewServer function.
+
+This gives flexibility, because it allows more than one specific form.
+
+This finally comes back to a concept in maths (which is pure logic), called morphism (sound familiar?). In maths, a morphism is a part of category theory that generalises structure-preserving maps such as homomorphism between algebraic structures, from set to set and continuous functions between topological spaces.
+
+== A note on coupling/configuration in Object-Oriented languages vs Functional languages
+
+One huge difference between object-oriented languages and functional languages is how coupling happens naturally throughout your codebase.
+
+When it comes to changing method signatures in OOP, you have more obvious options, like overloading methods. In Go however, when you have a receiver on a struct, there is no straight-up overloading feature, but you can get a similar behavior with passing a `struct` as a parameter to that function. This is pretty much an equivalent of dependency injection, and can provide a lot of flexibility in itself.
+
+== What is configuration and composition, how does it effect code quality.
+

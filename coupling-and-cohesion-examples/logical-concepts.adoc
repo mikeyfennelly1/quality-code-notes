@@ -1,0 +1,18 @@
+= logical-concepts
+:toc:
+
+The purpose of this document is to outline the mathematical concepts that form our code. You will see some overlap between the logical construct of these topics, and with some topics you have come across during your coding. This includes things like *abstract*, *polymorphic*, *structures*, *objects*, *composition*, *concrete*.
+
+In this document I will also talk about where these concepts come from and how they actually relate to concepts that we use in our work. I will also talk about how polymorphism can help decouple your code, and demistify coupling and cohesion, and understand why certain design patterns work - and give you the strong foundations to go ahead and create your own flexible, robust and elegant work.
+
+I will also expand on some of the topics discussed, and talk about other mathematical concepts that might not pop up as frequently, such as homomorphism, topological spaces, categories, homological algebra, monomorphism, homeomorphism, epimorphism and concrete categories.
+
+== Category theory
+=== Morphism
+In maths, a morphism is a  concept of category theory that generalizes structure-preserving maps, such as homomorphism between algebraic structures.
+
+== Abstract algebra
+
+What is abstract algebra?
+
+The study of algebraic structures, which are sets with specific operations acting on their elements. Algebraic structures, with their associated homomorphisms, form mathematical categories. Category theory gives a unified framework to study properties and constructions that are similar for various structures.

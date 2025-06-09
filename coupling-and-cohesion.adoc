@@ -1,0 +1,127 @@
+= Coupling and cohesion
+:toc:
+
+== Preface
+
+We want loosely coupled code, and we want highly cohesive code. Cohesion is easy enough to understand, and coupling is a bit more abstract. Once you get these topics down though, your code will be a lot better, and it will cause you much less time, and fewer headaches to change your code and get what you need from it.
+
+As Mark Burkley said; "_All code incurs technical debt. How you create your code decides how much you incur. In an ideal world, you don't write anything._"
+
+=== A note on referencing
+
+The best way to learn is by reading other people's work - people better than me. One great way to do this is by reading open source. link:https://projects.apache.org/projects.html?language[The Apache foundation projects] are an amazing resource for reading.
+
+These topics best examples are seen in professional projects, where really good people are implementing these concepts really well. Throughout this document I will try to reference open source projects that have implemented these patterns to get some of their features out there and built. These projects will all be in Java, just to keep it simple. Here are a list of some big open source projects.
+
+- Spring Framework
+- Jenkins (An automation server - often used for CI/CD).
+- Apache Kafka (a message streaming platform).
+- Apache Camel (a data integration framework).
+- Apache Flink
+
+Here are some other projects that can be used as a reference for other languages (although how they practice decoupling can be different across different paradigms):
+
+- Go: Kubernetes / runc / containerd /
+- C: Nginx / _most dbms_ / crun /
+
+== Abstraction - how you should have been taught.
+
+The fundamentals of abstraction in Java:
+
+- Inheritance (getting some code off another class without duplication)
+- Polymorphism (essentially hiding behind an interface)
+
+=== OO Design principles
+- Separate what changes from what stays constant.
+- Program to an interface (the conceptual interface - could be an abstract class or an interface), not an implementation.
+- Often it is better to extend at runtime, not at compile time.
+
+=== Benefits  of different types of abstract supertypes in object creation.
+
+==== Direct inheritance (concrete/completely static creation)
+- Problem with this is that any changes to the super class goes to all extending classes. Likely to cause problems, or you will forever be overriding methods from the superclass.
+
+*Common problem*: *Difficult to manage variation well.* Altering the behavior is difficult with straight-up inheritance, and you can only replace the whole object with another that is created from a different subclass.
+
+*Common solution*: Aggregation and composition.
+
+[NOTE]
+The difficulty to manage variation in subclasses is why we say that *inheritance is static*. Often, you want to be able to *alter the behavior of an object at runtime*.
+
+==== Interfaces (completely abstract)
+Essentially a way to tie your object to a contract.
+
+- Problem is that if you have to make a change it has to happen in all instances of the implementing classes. Pain in the hole and duplicates code all over the place.
+
+Common problem: *Too much variation to manage.*
+
+==== Abstract superclasses (hybrid)
+
+Can be a nice compliment of the two, but still leaves the control in the hands of the superclass.
+
+==== Alternatives
+===== Aggregation
+===== Composition
+
+==== Delegation
+Delegation is basically what happens after dependency injection. You inject an object of the `AbstractSuperType` into the class. This _instance variable_ is then used by the class whenever it wants to do some work. This is great in a lot of scenarios because the implementation of the behavior is up to the instance variable to decide. All the holder of that variable cares about is that there is some sort of implementation, and that it can interface with it.
+
+===== Why is this more decoupled than direct inheritance of functionality
+In direct inheritance you get what you are given. The control is in the hands of the superclass of which the class of our concern inherits from - it can control how the inheriting object works. In the case of delegation, this control is then removed from the parent when it is injected as a subservient object of the class of which we want to control the functionality. This gives rise to another name for dependency injection; _Inversion of Control_.
+
+This also has benefits for testing, as you now test how the object performs delegation to other objects. Its logic is now self-contained, and does not leave its own class. It's only concern is instructing other classes to do their work, if it does this as expected all tests should pass and the error is elsewhere.
+
+- A change in a class no longer propagates to other classes - as is the case sometimes when you have a parent-child relationship.
+- Changing the controlling class still has an effect on the controlling class.
+
+== What are design patterns
+They are essentially reusable solutions to reoccuring problems. They are not the answer to every problem, and you still need to be able to think for yourself. A foundation in what coupling and cohesion are, and why they have an effect on robust code is how you make your decisions. What you shouldn't do is give up on thinking about solutions, and use design patterns for everything regardless of the problem. Design solutions aren't a case of "what pattern should I use", it is - what is the best way I can do this without incurring technical debt, and you move from there with a basis of knowledge and understanding in what causes debt. If the answer is a pattern, good for you.
+
+When you are learning though, who cares. In my opinion, you should just go back to some project that you were making, take the learnings from this, and try see where you can notice couplings, and cohesions in your project. See if you can refactor it to patterns, and make all the mistakes in the world doing so - as long as you learn from them.
+
+=== Families of design patterns
+- link:https://refactoring.guru/design-patterns[GoF patterns]
+- link:https://www.oracle.com/java/technologies/design-patterns-catalog.html[Sun J2EE patterns]
+- link:https://camel.apache.org/components/4.10.x/eips/enterprise-integration-patterns.html[E.I.P. (Enterprise Integration Patterns)]
+
+== GoF patterns
+
+There are different families of design patterns, that can be used in different scenarios in your systems to create nice work.
+
+When you want to make a change, you want to minimise the hassle that you have in doing so.
+
+They come in different families:
+
+- *Behavioral*: These are essentially patterns of how these objects can work off eachother to achieve the end goal in a cheap way. These patterns typically includes objects referred to as _handlers_. Some common patterns from this family are the `Observer`, `Chain of Responsibility` and the `Iterator`.
+- *Creational*: Basically how do we create objects in a flexible way.
+- *Structural*: How do we stick these objects together in a flexible way.
+
+=== Common problems with common solutions:
+
+====
+*Problem:* You have a common class, but a shitload of concrete edge case extensions to this class - giving sprawl of inflexible extensions.
+
+*Possible Solution:* <<Decorator>> (aka Wrapper) class.
+====
+
+====
+*Problem:* You have a subsystem/library that requires a lot of configuration to use.
+
+*Possible Solution:* Facade pattern to simplify the interface.
+====
+
+====
+
+====
+
+=== Structural patterns
+==== Decorator
+A wrapper is an object that can be linked with a *target object*.
+
+Wrapper contains the same set of methods (i.e. implements the same interface) as the target and delegates to it all requests it receives. **The wrapper can alter the result by acting as a proxy filter to inbound or outbound calls to/from the target.**
+
+=== Behavioral patterns
+
+==== Observer
+
+The purpose of this is to create a subscription mechanism to notify multiple objects about any events that happen to the object that they are observing.
